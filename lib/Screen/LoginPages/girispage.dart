@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import '../../Services/authservice.dart';
 import '/Screen/MenuPage.dart';
 import '../../Variables/global.dart' as global;
 import '../PlanPages/PlanDetayPage.dart';
@@ -16,6 +17,10 @@ class GirisPage extends StatefulWidget {
 class _GirisPageState extends State<GirisPage> {
   TextEditingController mailctr=TextEditingController();
   TextEditingController passctr=TextEditingController();
+  bool _isSifreAnimated = true;
+  bool _isMailAnimated = true;
+
+  AuthService _authService=AuthService();
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
@@ -50,6 +55,8 @@ class _GirisPageState extends State<GirisPage> {
                     children: <Widget>[
                       SizedBox(height: 40,),
                       Container(
+                        width: MediaQuery.of(context).size.width*.95,
+
                         decoration: BoxDecoration(
                             color: Colors.purple.shade700,
                             borderRadius: BorderRadius.circular(10),
@@ -62,37 +69,81 @@ class _GirisPageState extends State<GirisPage> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
-                            Container(
-                              padding: EdgeInsets.all(10),
-                              decoration: BoxDecoration(
-                                  border: Border(bottom: BorderSide(color: Colors.purple))
-                              ),
-                              child: TextField(
-                                controller: mailctr,
-                                style: TextStyle(color: Colors.white),
-                                decoration: InputDecoration(
-                                    hintText: "Email",
-                                    hintStyle: TextStyle(color: Colors.white),
-                                    border: InputBorder.none
-                                ),
-                              ),
-                            ),
-                            Container(
-                              padding: EdgeInsets.all(10),
-                              decoration: BoxDecoration(
-                                  border: Border(bottom: BorderSide(color: Colors.purple))
-                              ),
-                              child: TextField(
+                            GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  _isMailAnimated = !_isMailAnimated;
+                                });
+                              },
+                              child: AnimatedContainer(
+                                curve: Curves.easeInOut,
+                                duration: Duration(milliseconds: 500),
+                                // width: _isAnimated ? 200.0 : 100.0,
+                                // height: _isAnimated ? 50.0 : 100.0,
+                                color: _isMailAnimated ? Colors.purple.shade700 : Colors.purple.shade100,
+                                child: Container(
+                                  margin: EdgeInsets.only(right: 5,left: 5),
+                                  padding: EdgeInsets.all(10),
+                                  decoration: BoxDecoration(
+                                      border: Border(bottom: BorderSide(color: Colors.purple))
+                                  ),
+                                  child: _isMailAnimated ?Text('Email: ${mailctr.text}',style: TextStyle(color: Colors.white),):TextField(
+                                    style: TextStyle(color: Colors.black),
+                                    controller: mailctr,
+                                    decoration: InputDecoration(
+                                        hintText: "Email",
 
-                                style: TextStyle(color: Colors.white),
-                                controller: passctr,
-                                decoration: InputDecoration(
-                                    hintText: "Şifre",
-                                    hintStyle: TextStyle(color: Colors.white),
-                                    border: InputBorder.none
+                                        hintStyle: TextStyle(color: Colors.black),
+                                        border: InputBorder.none
+                                    ),
+                                    onSubmitted: (value) {
+                                      setState(() {
+                                        _isMailAnimated=true;
+                                      });
+                                    },
+                                  ),
                                 ),
                               ),
                             ),
+
+                            GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  _isSifreAnimated = !_isSifreAnimated;
+                                });
+                              },
+                              child: AnimatedContainer(
+                                curve: Curves.easeInOut,
+                                duration: Duration(milliseconds: 500),
+                                // width: _isAnimated ? 200.0 : 100.0,
+                                // height: _isAnimated ? 50.0 : 100.0,
+                                color: _isSifreAnimated ? Colors.purple.shade700 : Colors.purple.shade100,
+                                child: Container(
+                                  margin: EdgeInsets.only(right: 5,left: 5),
+                                  padding: EdgeInsets.all(10),
+                                  decoration: BoxDecoration(
+                                      border: Border(bottom: BorderSide(color: Colors.purple))
+                                  ),
+                                  child: _isSifreAnimated ?Text('Şifre: ${passctr.text}',style: TextStyle(color: Colors.white),):TextField(
+                                    style: TextStyle(color: Colors.black),
+                                    controller: passctr,
+                                    decoration: InputDecoration(
+                                        hintText: "Şifre",
+
+                                        hintStyle: TextStyle(color: Colors.black),
+                                        border: InputBorder.none
+                                    ),
+                                    onSubmitted: (value) {
+                                      setState(() {
+                                        _isSifreAnimated=true;
+                                      });
+                                    },
+                                  ),
+                                ),
+                              ),
+                            ),
+
+
                           ],
                         ),
                       ),
@@ -102,10 +153,18 @@ class _GirisPageState extends State<GirisPage> {
                         child: Center(
                           child: GestureDetector(
                             onTap: () {
+
                               if(mailctr.text.isNotEmpty){
-                                global.kullanicimail=mailctr.text;
-                                global.kullaniciadi=mailctr.text.substring(0,mailctr.text.length-(mailctr.text.length/2).toInt());
-                                Navigator.pushNamed(context, "/menu");
+                                _authService.signIn(
+                                    email: mailctr.text, password: passctr.text)
+                                    .then((value) {
+                                  if(value=="Hosgeldin"){
+                                    Navigator.pushNamed(context, '/menu');
+                                  }else{
+
+                                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(value)));
+                                  }
+                                });
                               }else{
                                 var fToast=FToast();
                                 fToast.init(context);
@@ -122,7 +181,7 @@ class _GirisPageState extends State<GirisPage> {
                                         children: [
                                           Icon(Icons.warning),
                                           SizedBox(width: 15,),
-                                          Text('Email Alanını Doldurunuz..')
+                                          Text('Alanları Doldurunuz..')
                                         ],
                                       ),
                                     ));
@@ -146,16 +205,16 @@ class _GirisPageState extends State<GirisPage> {
                       Container(height: 50,
                         child: Column(
                           children: [
-                            Text('Hesabınız yoksa'),
+                            Text('Hesabınız yoksa',style: TextStyle(color: Colors.black),),
                             SizedBox(height: 5,),
                             GestureDetector(
                                 onTap: () {
                                   Navigator.pushNamed(context, "/kayit");
                                 },
-                                child: Text('Kayıt Ol')),
+                                child: Text('Kayıt Ol',style: TextStyle(color: Colors.black))),
                           ],
                         ),
-                      )
+                      ),
 
 
                     ],

@@ -1,6 +1,3 @@
-
-import 'dart:async';
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
@@ -19,9 +16,7 @@ class BaglantiWebPageState extends State<BaglantiWebPage> {
   @override
   void initState() {
     super.initState();
-    // Enable hybrid composition.
 
-    // if (Platform.isAndroid) WebView.platform = SurfaceAndroidWebView();
   }
 
   @override
@@ -44,11 +39,10 @@ class BaglantiWebPageState extends State<BaglantiWebPage> {
                 ),
               ),
               onWebViewCreated: (InAppWebViewController controller) {},
-              // onLoadStart: (InAppWebViewController controller, Uri url) {},
-              // onLoadStop: (InAppWebViewController controller, Uri url) {},
 
               onProgressChanged: (InAppWebViewController controller,int progress){
                 setState(() {
+
                   _progress=progress/100;
                 });
               },

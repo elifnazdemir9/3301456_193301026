@@ -1,15 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import '../../Services/dbhelper.dart';
 import '../../Variables/global.dart' as global;
 class TestSonuc extends StatefulWidget {
   @override
   _TestSonucState createState() => _TestSonucState(); }
 class _TestSonucState extends State<TestSonuc> {
+
   late String kullaniciAdi;
   late int puan;
   late String hangiTest;
   late String sonuc;
+
   @override
   Widget build(BuildContext context) {
+    final FirebaseAuth _auth = FirebaseAuth.instance;
 
     late List<dynamic> data1;
     data1 = ModalRoute.of(context)?.settings.arguments as List<dynamic>? ?? [];
@@ -48,39 +54,66 @@ class _TestSonucState extends State<TestSonuc> {
       onWillPop: () async {
         return false;
       },
-      child: Scaffold(
-
-        body: Container(
-
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topRight,
-              end: Alignment.bottomLeft,
-                colors: [Color(0xffc471f5),Color(0xfffa71cd)]
+      child: FutureBuilder(
+        future: FirebaseFirestore.instance.collection('Kullanıcılar').doc(_auth.currentUser!.uid).get(),
+        builder: (context, snapshot) {
+          if(snapshot.connectionState==ConnectionState.waiting){
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircularProgressIndicator(),
+                  Text('Yükleniyor')
+                ],
+              ),
+            );
+          }
+          return Scaffold(
+            appBar: AppBar(
+              centerTitle: true,
+              title: Text('Sonuç'),
+              leading: Text(''),
+              actions:[
+                IconButton(
+                icon: Icon(Icons.text_snippet),
+                onPressed: () {
+                  Navigator.pushNamed(context, '/testsonuclar');
+                },
+              ),]
             ),
-          ),
-          child: Column(
+            body: Container(
 
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topRight,
+                  end: Alignment.bottomLeft,
+                    colors: [Color(0xffc471f5),Color(0xfffa71cd)]
+                ),
+              ),
+              child: Column(
 
-              Text( "Sayın "+global.kullaniciadi!,style: TextStyle(fontSize: 30.0,fontWeight: FontWeight.bold,color: Colors.black),textAlign: TextAlign.center),
-              Text(sonuc,style: TextStyle(fontSize: 30.0,fontWeight: FontWeight.bold,color: Colors.white),textAlign: TextAlign.center),
-              Padding(padding: EdgeInsets.all(10)),
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
 
-              SizedBox(height: 20.0),
-                GestureDetector(
-                  onTap: () {
-                    Navigator.pushNamed(context, "/menu");
-                  },
-                  child: Container(height: 50,width: 50,decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(100),color: Colors.white
-                  ),child: Icon(Icons.home),),
-                )
+                  Text( "Sayın "+snapshot.data!.get('isim'),style: TextStyle(fontSize: 30.0,fontWeight: FontWeight.bold,color: Colors.black),textAlign: TextAlign.center),
+                  Text(sonuc,style: TextStyle(fontSize: 30.0,fontWeight: FontWeight.bold,color: Colors.white),textAlign: TextAlign.center),
+                  Padding(padding: EdgeInsets.all(10)),
+
+                  SizedBox(height: 20.0),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.pushNamed(context, "/menu");
+                      },
+                      child: Container(height: 50,width: 50,decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(100),color: Colors.white
+                      ),child: Icon(Icons.home),),
+                    )
 
 
-            ],
-          ),
-        ),
+                ],
+              ),
+            ),
+          );
+        }
       ),
     ); } }

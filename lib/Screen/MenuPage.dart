@@ -24,6 +24,8 @@ class _MenuPage2State extends State<MenuPage2> {
 
   int maxCount = 5;
   final _pageController = PageController(initialPage: 0);
+
+  ///BottomBar'daki butonlara tiklandığinda gösterilecek ekranlar.
   final List<Widget> bottomBarPages = [
     const Planlar(),
     const PlanEkle(),
@@ -31,17 +33,8 @@ class _MenuPage2State extends State<MenuPage2> {
     const TestlerPage(),
     const ProfilPage(),
   ];
-  ///BottomBar'daki butonlara tiklandığinda gösterilecek ekranlar.
-  List<Widget> _widgetOptions=<Widget>[
 
-    //FirstPage(),
-    Planlar(),
-    PlanEkle(),
-    IletisimPage(),
-    TestlerPage(),
-    ProfilPage()
-    //  ProfilPage(),
-  ];
+
 
   @override
   void initState() {
@@ -50,8 +43,7 @@ class _MenuPage2State extends State<MenuPage2> {
 
   @override
   Widget build(BuildContext context) {
-      final colorScheme = Theme.of(context).colorScheme;
-      final textTheme = Theme.of(context).textTheme;
+
       return WillPopScope(
         onWillPop: () async {
           return false;
@@ -68,7 +60,6 @@ class _MenuPage2State extends State<MenuPage2> {
               ? AnimatedNotchBottomBar(
             pageController: _pageController,
             color: Colors.white,
-            showLabel: false,
             notchColor: Colors.purple,
             bottomBarItems: [
               const BottomBarItem(

@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import '../../Variables/global.dart' as global;
 
 class TestlerPage extends StatefulWidget {
   const TestlerPage({Key? key}) : super(key: key);
@@ -18,9 +19,9 @@ class _TestlerPageState extends State<TestlerPage> {
         height: MediaQuery.of(context).size.height,
         decoration: BoxDecoration(
             gradient: LinearGradient(
-                colors: [
-                  Colors.purple,Colors.purple.shade800
-                ]
+                colors: global.tema=='acik'?
+                [ Colors.purple,Colors.purple.shade800]:
+                [Colors.grey,Colors.grey.shade700]
             )
         ),
         alignment: Alignment.center,

@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
-
-
-
+import 'package:mobil/Services/dbhelper.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:mobil/Variables/global.dart' as global;
 class MotivasyonTest extends StatefulWidget {
   @override
   _MotivasyonTestState createState() => _MotivasyonTestState();
 }
 
 class _MotivasyonTestState extends State<MotivasyonTest> {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
   String kullaniciAdi = '';
   var sorular = [
     {
@@ -64,12 +67,33 @@ class _MotivasyonTestState extends State<MotivasyonTest> {
   int mevcutSoru = 0;
   int puan = 0;
   String mevcutcevap = '';
+  Future<void> _saveScore() async {
+    final userDocRef = FirebaseFirestore.instance
+        .collection('Kullanıcılar')
+        .doc(_auth.currentUser!.uid);
+    userDocRef.get().then((DocumentSnapshot documentSnapshot) async{
+      if (documentSnapshot.exists) {
+        // Belge mevcut olduğunda alanları alabilirsiniz.
+        Map<String, dynamic>? data = documentSnapshot.data() as Map<String, dynamic>?;;
+        // Alanlara erişim için ilgili anahtarları kullanabilirsiniz.
+        var username = data?['isim'];
+        var email = data!['email'];
+        final dbHelper = DatabaseHelper.instance;
+        await dbHelper.insertScore(username+" -Motivasyon", puan);
+        // ...
+      }
+    });
 
+    print(puan);
+    // Navigator.pop(context);
+  }
   void BitireYolla() {
+    //
     var data = [];
     data.add(kullaniciAdi);
     data.add(puan);
     data.add("motivasyon");
+    print(puan);
     Navigator.pushNamed(context, "/testsonuc",arguments: data);
   }
 
@@ -78,6 +102,7 @@ class _MotivasyonTestState extends State<MotivasyonTest> {
     if (mevcutSoru > sorular.length-1) {
       mevcutSoru = 0;
       BitireYolla();
+      _saveScore();
     }
   }
 

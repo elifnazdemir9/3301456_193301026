@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 
-
-
+import '../../Services/dbhelper.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 class KisilikTest extends StatefulWidget {
   @override
   _KisilikTestState createState() => _KisilikTestState();
 }
 
 class _KisilikTestState extends State<KisilikTest> {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
   String kullaniciAdi = '';
   var sorular = [
     {
@@ -64,13 +67,30 @@ class _KisilikTestState extends State<KisilikTest> {
   int mevcutSoru = 0;
   int puan = 0;
   String mevcutcevap = '';
-
+  Future<void> _saveScore() async {
+    final userDocRef = FirebaseFirestore.instance
+        .collection('Kullanıcılar')
+        .doc(_auth.currentUser!.uid);
+    userDocRef.get().then((DocumentSnapshot documentSnapshot) async{
+      if (documentSnapshot.exists) {
+        Map<String, dynamic>? data = documentSnapshot.data() as Map<String, dynamic>?;;
+        var username = data?['isim'];
+        var email = data!['email'];
+        final dbHelper = DatabaseHelper.instance;
+        await dbHelper.insertScore(username+" -Kisilik", puan);
+        // ...
+      }
+    });
+    print(puan);
+    // Navigator.pop(context);
+  }
   void BitireYolla() {
     var data = [];
-    data.add(kullaniciAdi);
+    data.add('kullaniciAdi');
     data.add(puan);
     data.add("kisilik");
     Navigator.pushNamed(context, "/testsonuc",arguments: data);
+
   }
 
   void kontrolEt() {
@@ -78,6 +98,7 @@ class _KisilikTestState extends State<KisilikTest> {
     if (mevcutSoru > sorular.length-1) {
       mevcutSoru = 0;
       BitireYolla();
+       _saveScore();
     }
   }
 

@@ -1,5 +1,3 @@
-
-
 class PlanItem {
   final String baslik;
   final List<String> not;
@@ -12,16 +10,34 @@ class PlanItem {
     required this.checkNot,
     required this.durum,
   });
-
-
 }
 PlanListe allPlan=PlanListe(
   planlar: [
-      PlanItem(baslik: "Yks Başvuru",durum: "Acil",not:["başvuru için para ayarlanacak","asfsaf"],checkNot: [false,true] ),
-      PlanItem(baslik: "Akbank Staj Başvuru",durum: "Çok Acil",not:["başvuru için sağlık evrakları düzenlenecek"] ,checkNot: [false]),
-      PlanItem(baslik: "Trendyol Kargo İade",durum: "Acil Değil",not:["iade kodu kontrol edilecek"],checkNot: [false] ),
-      PlanItem(baslik: "İş Yer Eğitimi Proje Teslimi",durum: "Çok Acil",not:["sorumlu kişiye hemen teslim edilmesi gerekiyor"],checkNot: [false] ),
-      PlanItem(baslik: "Robotik Proje Teslimi",durum: "Acil",not:["teslim zamanı 1 hafta kaldı"],checkNot: [false] ),
+      PlanItem(
+          baslik: "Yks Başvuru",
+          durum: "Acil",
+          not:["başvuru için para ayarlanacak","çıkmış sorular testi alınacak"],
+          checkNot: [false,true] ),
+      PlanItem(
+          baslik: "Akbank Staj Başvuru",
+          durum: "Çok Acil",
+          not:["başvuru için sağlık evrakları düzenlenecek"] ,
+          checkNot: [false]),
+      PlanItem(
+          baslik: "Trendyol Kargo İade",
+          durum: "Acil Değil",
+          not:["iade kodu kontrol edilecek"],
+          checkNot: [false] ),
+      PlanItem(
+          baslik: "İş Yer Eğitimi Proje Teslimi",
+          durum: "Çok Acil",
+          not:["sorumlu kişiye hemen teslim edilmesi gerekiyor"],
+          checkNot: [false] ),
+      PlanItem(
+          baslik: "Robotik Proje Teslimi",
+          durum: "Acil",
+          not:["teslim zamanı 1 hafta kaldı"],
+          checkNot: [false] ),
   ]
 );
 

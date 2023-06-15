@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import '../../Services/authservice.dart';
 import '/Screen/MenuPage.dart';
 import '../../Variables/global.dart' as global;
 import '../PlanPages/PlanDetayPage.dart';
@@ -16,6 +19,8 @@ class _KayitPageState extends State<KayitPage> {
   TextEditingController mailctr=TextEditingController();
   TextEditingController passctr=TextEditingController();
   TextEditingController usernamectr=TextEditingController();
+  AuthService _authService=AuthService();
+
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
@@ -117,10 +122,25 @@ controller: usernamectr,
                       Center(
                         child: InkWell(
                           onTap: () {
+
+
                             if(mailctr.text.isNotEmpty&&passctr.text.isNotEmpty&&usernamectr.text.isNotEmpty){
-                              global.kullanicimail=mailctr.text;
-                              global.kullaniciadi=usernamectr.text;
-                              Navigator.pushNamed(context, "/menu");
+                              _authService
+                                  .signUp(
+                                  name: usernamectr.text,
+                                  email: mailctr.text,
+                                  password: passctr.text)
+                                  .then((value) {
+                                if (value == 'Olusturuldu') {
+                                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(value)));
+                                  Timer(Duration(seconds: 1),(){
+                                    Navigator.pushNamed(context, '/menu');
+                                  });
+                                } else {
+                                  ScaffoldMessenger.of(context)
+                                      .showSnackBar(SnackBar(content: Text(value)));
+                                }
+                              });
                             }else{
                               var fToast=FToast();
                               fToast.init(context);

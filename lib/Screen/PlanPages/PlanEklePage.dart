@@ -1,7 +1,10 @@
+import 'package:mobil/Services/todoservice.dart';
+
 import '/Model/todolist.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import '../../Variables/global.dart' as global;
 
 class PlanEkle extends StatefulWidget {
   const PlanEkle({Key? key}) : super(key: key);
@@ -11,18 +14,19 @@ class PlanEkle extends StatefulWidget {
 }
 
 class _PlanEkleState extends State<PlanEkle> {
-  DateTime baslangicdateTime=DateTime.now();
-  DateTime bitisdateTime=DateTime.now();
-  DateTime nowTime=DateTime.now();
+
   TextEditingController planbaslikctr=TextEditingController();
  TextEditingController notctr=TextEditingController();
+  TodoService service=TodoService();
+
+
   List<TextEditingController> _controllers = []; // controller listesi
   int _count = 0;
 
   void _addTextField() {
     setState(() {
       _count++;
-      _controllers.add(TextEditingController()); // yeni bir controller ekle
+      _controllers.add(TextEditingController()); // yeni bir controller eklendi
     });
   }
   void _deleteTextField() {
@@ -39,13 +43,30 @@ class _PlanEkleState extends State<PlanEkle> {
     'Acil',
     'Acil Değil'
   ];
+
+  List<String> notuTextAl(List<TextEditingController> controllers) {
+    List<String> notes=[];
+    for(TextEditingController note in controllers){
+
+      notes.add(note.text);
+    }
+    return notes;
+    }
+  List<bool> notuCheckAl(List<TextEditingController> controllers) {
+    List<bool> checkNotes=[];
+    for(TextEditingController note in controllers){
+
+      checkNotes.add(false);
+    }
+    return checkNotes;
+  }
   @override
   Widget build(BuildContext context) {
     List<Widget> textFields = []; // text field listesi
     for (int i = 0; i < _count; i++) {
       textFields.add(
         TextFormField(
-          controller: _controllers[i], // her bir text field için ayrı controller kullan
+          controller: _controllers[i], // her bir text field için ayrı controller kullanıldı
           decoration: InputDecoration(
             hintText: 'Not',
           ),
@@ -62,9 +83,11 @@ class _PlanEkleState extends State<PlanEkle> {
           height: MediaQuery.of(context).size.height,
           decoration: BoxDecoration(
               gradient: LinearGradient(
-                  colors: [
-                    Colors.purple,Colors.purple.shade800
-                  ]
+                  colors:
+                    global.tema=='acik'?
+                    [ Colors.purple,Colors.purple.shade800]:
+                    [Colors.grey,Colors.grey.shade700]
+
               )
           ),
           child: Column(
@@ -107,12 +130,13 @@ class _PlanEkleState extends State<PlanEkle> {
                           ),
                           child: Column(
                             children: [
-                              TextFormField(
-                                controller: notctr, // her bir text field için ayrı controller kullan
-                                decoration: InputDecoration(
-                                  hintText: 'Not',
-                                ),
-                              ),
+                              // TextFormField(
+                              //   controller: notctr, // her bir text field için ayrı controller kullan
+                              //   decoration: InputDecoration(
+                              //     hintText: 'Not',
+                              //   ),
+                              // ),
+                              Text('Not eklemek için butona basınız.',style: TextStyle(color: Colors.black),),
                               ...textFields,
                             ],
                           )
@@ -137,7 +161,6 @@ class _PlanEkleState extends State<PlanEkle> {
                         ),
                       ],
                     )
-
                   ],
                 ),
               ),
@@ -181,28 +204,39 @@ class _PlanEkleState extends State<PlanEkle> {
                   foregroundColor: Colors.purple.shade800,
                   hoverColor: Colors.white,
                   elevation: 10,
-                  onPressed: () {
+                  onPressed: () async{
+
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(backgroundColor: Colors.greenAccent,content: Text('Eklendi')));
+
+
                   var fToast=FToast();
                   fToast.init(context);
-                  if(planbaslikctr.text.isNotEmpty&&notctr.text.isNotEmpty){
+                  if(planbaslikctr.text.isNotEmpty){
+                    await service.TodoEkle(planbaslikctr.text, notuTextAl(_controllers), notuCheckAl(_controllers),dropdownvalue.toString());;
+
                     PlanItem yeniPlan = PlanItem(
                       baslik: planbaslikctr.text,
                       not: [notctr.text],
                       checkNot: [false],
                       durum: dropdownvalue,
                     );
-                    setState(() {
+                    setState(() async{
                       if(_count>0){
                         for (int i = 0; i < _count; i++) {
+                          // await service.TodoEkle(planbaslikctr.text,notctr.text,false,dropdownvalue.toString());
+
                           if(_controllers[i].text.isNotEmpty){
                             yeniPlan.not.add(_controllers[i].text);
                             yeniPlan.checkNot.add(false);
                           }
+                          // await service.TodoEkle(planbaslikctr.text,yeniPlan.not,yeniPlan.checkNot,dropdownvalue.toString());
+
                         }
                       }
                       allPlan.planlar.add(yeniPlan);
                       fToast.showToast(
-                          toastDuration: Duration(milliseconds: 1000),gravity: ToastGravity.BOTTOM_RIGHT,
+                          toastDuration: Duration(milliseconds: 1000),
+                          gravity: ToastGravity.BOTTOM_RIGHT,
                           child: Container(
                             padding: EdgeInsets.symmetric(horizontal: 24,
                                 vertical: 12),
