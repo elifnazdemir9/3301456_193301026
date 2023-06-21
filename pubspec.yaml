@@ -65,7 +65,7 @@ dev_dependencies:
   fl_chart: ^0.61.0
   get: ^4.6.5
   gradient_floating_button: ^0.0.2
-  sqflite: ^2.0.0+3
+  sqflite: ^2.2.8+4
   path: ^1.8.3
   path_provider: ^2.0.15
 
