@@ -54,7 +54,8 @@ class _PlanlarState extends State<Planlar> {
         child: Scaffold(
           appBar: AppBar(leading: Text(''),centerTitle: true,title: GestureDetector(
             onTap: () {
-              var data=[];
+              print('hi');
+                        var data=[];
               data.add(snapshot.data?.size);
               data.add(snapshot.data?.docs);
               Navigator.pushNamed(context, '/grafik',arguments: data);
@@ -114,7 +115,8 @@ class _PlanlarState extends State<Planlar> {
                                           title: Text('Silmek istediğine emin misin'),
                                           actions: [
                                             ElevatedButton(onPressed: () {
-                                              TodoService().TodoSil(snapshot.data!.docs[index].id);
+                                              print('hello there');
+                                                        TodoService().TodoSil(snapshot.data!.docs[index].id);
                                               Navigator.pop(context);
                                             }, child: Text('Sil')),
                                             ElevatedButton(onPressed: () {

@@ -1,9 +1,16 @@
+
+import 'package:mobil/Screen/pdf_viewer.dart';
+import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:mobil/Screen/weather_page.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import '../Services/api_service.dart';
 import '../Variables/global.dart' as global;
+import 'dosyaEklePage.dart';
 class ProfilPage extends StatefulWidget {
   const ProfilPage({Key? key}) : super(key: key);
 
@@ -19,11 +26,15 @@ class _ProfilPageState extends State<ProfilPage> {
       appBar: AppBar(
         actions: [
           IconButton(onPressed: () {
-            Navigator.pushNamed(context, '/ayarlar');
+            print('hashim');
+                Navigator.pushNamed(context, '/ayarlar');
           }, icon: Icon(Icons.settings)),
           IconButton(onPressed: () {
             Navigator.pushNamed(context, '/testsonuclar');
           }, icon: Icon(Icons.text_snippet)),
+          IconButton(onPressed: () {
+            Navigator.push(context, MaterialPageRoute(builder: (context)=>DosyaEklePage()));
+          }, icon: Icon(Icons.file_copy_outlined)),
         ],
         centerTitle: true,
         leading: IconButton(onPressed: () {
@@ -116,6 +127,7 @@ class _ProfilPageState extends State<ProfilPage> {
 
                     Container(
                       child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           ListTile(
                             title: Text(
@@ -151,6 +163,88 @@ class _ProfilPageState extends State<ProfilPage> {
                               'https://github.com/elifnazdemir9',
                               style: TextStyle(
                                 fontSize: 18,
+                              ),
+                            ),
+                          ),
+                          Divider(),
+
+                          ListTile(
+
+
+                            onLongPress: () async{
+                              print('long pressed');
+                              Navigator.push(context, MaterialPageRoute(builder: (context)=>SyncVisionPdfViewer()));
+                              // SfPdfViewer.network(src)
+                              // SyncVisionPdfViewer(
+                              //   pdfUrl:
+                              //   'https://firebasestorage.googleapis.com/v0/b/maarif-567b8.appspot.com/o/School%20Health%20Information%20Form.pdf?alt=media&token=3e23d985-79cd-4bf3-863d-69945257b082&_gl=1*1weoa31*_ga*Mjg1MTAxOTg3LjE2ODIyNDk0MzA.*_ga_CW55HF8NVT*MTY4NjY1MjM1Mi4zMS4xLjE2ODY2NTI0NDYuMC4wLjA.',
+                              // );
+
+                          // launch(
+                              //   'https://github.com/elifnazdemir9');
+                            },
+                            title: Text(
+                              'CV',
+                              style: TextStyle(
+                                color: Colors.deepPurple,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            subtitle: Text(
+                              'cift tiklayarak erisebilirsiniz',
+                              style: TextStyle(
+                                fontSize: 18,
+                              ),
+                            ),
+                          ),
+                          Divider(),
+                          GestureDetector(
+                           onHorizontalDragStart: (detail)async{
+                              Position kullaniciKonumu=  await determinePosition();
+                             String locationName=await getLocationName(kullaniciKonumu.latitude,kullaniciKonumu.longitude);
+
+                                // buradan api'y' cagiracaz
+                                ApiCall apiCall=ApiCall();
+                              WeatherData? weatherData= await apiCall.getWeather(kullaniciKonumu);
+
+
+                               Navigator.push(context, MaterialPageRoute(builder: (context)=>WeatherPage(weatherData:weatherData!, locationName: locationName,)));
+
+
+
+                        },
+                            child: ListTile(
+                              onTap: () async{
+                               //  // ilk kullanici konumu aliyoruz
+                               //  Position kullaniciKonumu=  await determinePosition();
+                               // String locationName=await getLocationName(kullaniciKonumu.latitude,kullaniciKonumu.longitude);
+                               //
+                               //    // buradan api'y' cagiracaz
+                               //    ApiCall apiCall=ApiCall();
+                               //  WeatherData? weatherData= await apiCall.getWeather(kullaniciKonumu);
+                               //
+                               //
+                               //   Navigator.push(context, MaterialPageRoute(builder: (context)=>WeatherPage(weatherData:weatherData!, locationName: locationName,)));
+                               //
+                               //
+                               //
+                               // // launch(
+                               //   //   'https://github.com/elifnazdemir9');
+                              },
+                              title: Text(
+                                'Weather',
+                                style: TextStyle(
+                                  color: Colors.deepPurple,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              subtitle: Text(
+                                'www.openweather.com',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                ),
                               ),
                             ),
                           ),

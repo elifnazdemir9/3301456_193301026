@@ -53,7 +53,7 @@ class _GirisPageState extends State<GirisPage> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      SizedBox(height: 40,),
+                      Expanded(child: SizedBox(height: 40,)),
                       Container(
                         width: MediaQuery.of(context).size.width*.95,
 

@@ -6,14 +6,14 @@ class Themes{
     iconTheme: IconThemeData(color: Colors.deepPurple),
     appBarTheme: AppBarTheme(
       backgroundColor: Colors.purpleAccent.shade100,
-      brightness: Brightness.light,
-      textTheme: TextTheme(
-        headline1: TextStyle(
-          color: Colors.black,
-        )
-      )
-    ),
-    buttonColor: Colors.pink,
+     // brightness: Brightness.light,
+      //textTheme: TextTheme(
+       // headline1: TextStyle(
+        //  color: Colors.black,
+      //  )
+      ),
+
+  //  buttonColor: Colors.pink,
   );
   final darkTheme=ThemeData.dark().copyWith(
     primaryColor: Colors.purpleAccent.shade700,
@@ -22,13 +22,13 @@ class Themes{
 
       appBarTheme: AppBarTheme(
         backgroundColor: Colors.purpleAccent.shade700,
-        brightness: Brightness.dark,
-      textTheme: TextTheme(
-        headline1: TextStyle(
-          color: Colors.red
-        )
-      )
+        //brightness: Brightness.dark,
+     // textTheme: TextTheme(
+     //   headline1: TextStyle(
+     //     color: Colors.red
+    //    )
+    //  )
     ),
-    buttonColor: Colors.greenAccent
+   // buttonColor: Colors.greenAccent
   );
 }
